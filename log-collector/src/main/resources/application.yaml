@@ -1,3 +1,22 @@
 spring:
   application:
     name: log-collection
+  kafka:
+    bootstrap-servers: localhost:9092
+    admin:
+      fail-fast: true
+    producer:
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+      acks: 1
+      properties:
+        spring:
+          json:
+            add:
+              type:
+                headers: false
+broker:
+  kafka:
+    topics:
+      logs:
+        name: logs
