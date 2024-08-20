@@ -10,6 +10,19 @@ spring:
       fail-fast: true
     streams:
       application-id: log-handler
+  boot:
+    admin:
+      client:
+        url: http://localhost:8083
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    env:
+      show-values: always
 
 broker:
   kafka:
