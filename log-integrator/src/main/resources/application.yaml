@@ -32,6 +32,8 @@ spring:
     admin:
       client:
         url: http://localhost:8083
+        instance:
+          service-base-url: http://localhost:8082
 
 management:
   endpoints:
