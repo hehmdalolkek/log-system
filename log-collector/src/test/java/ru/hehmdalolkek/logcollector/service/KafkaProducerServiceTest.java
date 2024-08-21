@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @DirtiesContext
 @EmbeddedKafka(partitions = 3, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
-class KafkaProducerServiceIT {
+class KafkaProducerServiceTest {
 
     static final String LOGS_TOPIC_NAME = "logs";
 
@@ -32,8 +32,8 @@ class KafkaProducerServiceIT {
     KafkaLogService kafkaLogService;
 
     @Test
-    @DisplayName("")
-    void test() {
+    @DisplayName("Send log to kafka test")
+    void sendLogToKafkaTest() {
         // given
         RequestLogDto log = LogUtil.getRequestLogDto();
 
