@@ -1,20 +1,19 @@
-package ru.hehmdalolkek.logintegrator.service;
+package ru.hehmdalolkek.logintegrator.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hehmdalolkek.logintegrator.model.LogEntity;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
-@Service
+@Repository
 @RequiredArgsConstructor
-public class JDBCLogService implements LogService {
+public class JDBCLogDao implements LogDao {
 
     private final static String INSERT_LOG_SQL = "INSERT INTO log (logger_name, thread_name, `type`, message, stack_trace) " +
             "VALUES (?, ?, ?, ?, ?)";
@@ -32,7 +31,7 @@ public class JDBCLogService implements LogService {
     public void saveLog(LogEntity logEntity) {
         KeyHolder logKeyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(INSERT_LOG_SQL, new String[] { "id" });
+            PreparedStatement ps = connection.prepareStatement(INSERT_LOG_SQL, new String[]{"id"});
             ps.setString(1, logEntity.getLog().getLoggerName());
             ps.setString(2, logEntity.getLog().getThreadName());
             ps.setString(3, logEntity.getLog().getType().toString());
@@ -44,17 +43,17 @@ public class JDBCLogService implements LogService {
 
         KeyHolder serviceKeyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(INSERT_SERVICE_SQL, new String[] { "id" });
+            PreparedStatement ps = connection.prepareStatement(INSERT_SERVICE_SQL, new String[]{"id"});
             ps.setString(1, logEntity.getService().getName());
             ps.setString(2, logEntity.getService().getInstanceId());
             return ps;
         }, serviceKeyHolder);
 
         Object[] args = {
-            logEntity.getUuid(),
-            logEntity.getDatetime(),
-            serviceKeyHolder.getKey(),
-            logKeyHolder.getKey()
+                logEntity.getUuid(),
+                logEntity.getDatetime(),
+                serviceKeyHolder.getKey(),
+                logKeyHolder.getKey()
         };
         this.jdbcTemplate.update(INSERT_ERROR_SQL, new ArgumentPreparedStatementSetter(args));
     }
